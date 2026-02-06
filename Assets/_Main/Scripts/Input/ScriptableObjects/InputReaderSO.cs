@@ -7,6 +7,7 @@ public class InputReaderSO : ScriptableObject, Controls.IPlayerActions
 {
     public event UnityAction<Vector2> MovementEvent;
     public event UnityAction PrimaryFireEvent;
+    public event UnityAction PrimaryFireCancelledEvent;
     public event UnityAction SecondaryFireEvent;
 
     private Controls _controlsScript;
@@ -37,6 +38,9 @@ public class InputReaderSO : ScriptableObject, Controls.IPlayerActions
     {
         if (PrimaryFireEvent != null && context.started)
             PrimaryFireEvent.Invoke();
+
+        if(PrimaryFireCancelledEvent != null && context.canceled)
+            PrimaryFireCancelledEvent.Invoke();
     }
 
     public void OnSecondaryFire(InputAction.CallbackContext context)

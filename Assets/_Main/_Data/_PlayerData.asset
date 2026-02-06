@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1c8a53188592f14a9b14723518f69f3, type: 3}
   m_Name: _PlayerData
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDataSO
+  HitPoints: 3
   InputThreshold: 0.25
   MovementSpeed: 10
+  FireRate: 0.125
