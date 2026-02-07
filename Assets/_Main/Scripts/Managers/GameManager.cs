@@ -4,6 +4,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     [field: SerializeField, Range(1,64)] public int PixelsPerUnit { get; private set; } = 16;
+    [field: SerializeField] public Camera PixelPerfectCamera { get; private set; }
 
     [SerializeField]
     private GameObject[] _hpDisplayHearts;

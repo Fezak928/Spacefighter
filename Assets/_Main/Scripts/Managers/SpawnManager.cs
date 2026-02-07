@@ -1,9 +1,11 @@
 using UnityEngine;
 
-public class Spawner : MonoBehaviour
+public class SpawnManager : MonoBehaviour
 {
     [SerializeField] private float _spawnRate = 5f;
-    [SerializeField] private GameObject _spawnablePrefab;
+    [SerializeField] private GameObject _asteroid;
+
+    [SerializeField] private Camera _pixelPerfectCamera;
 
     private float _spawnTimer;
 
@@ -17,7 +19,7 @@ public class Spawner : MonoBehaviour
 
     private void Spawn()
     {
-        ObjectPoolingManager.SpawnObject(_spawnablePrefab, this.transform.position, Quaternion.identity);
+        ObjectPoolingManager.SpawnObject(_asteroid, this.transform.position, Quaternion.identity);
         _spawnTimer = _spawnRate;
     }
 

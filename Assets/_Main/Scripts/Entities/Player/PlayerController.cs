@@ -9,6 +9,9 @@ public class PlayerController : MonoBehaviour, IMovable, IDamageable
     private PlayerDataSO _playerData;
     private CollisionAndMovementController _movementController;
 
+    [SerializeField] private GameObject _mainProjectile;
+    [SerializeField] private Transform _projectileSpawnPosition;
+
     public int CurrentHitpoints { get; set; }
     private Vector2 _movementInput;
     public Vector2 Velocity { get; set; }
@@ -55,8 +58,7 @@ public class PlayerController : MonoBehaviour, IMovable, IDamageable
 
         if (_shooting && _primaryFireCooldown <= 0f)
         {
-            Debug.Log("Fire");
-            _primaryFireCooldown = _playerData.FireRate;
+            ShootProjectile();
         }
     }
 
@@ -134,6 +136,12 @@ public class PlayerController : MonoBehaviour, IMovable, IDamageable
     private void OnCancelledPrimaryFire()
     {
         _shooting = false;
+    }
+
+    private void ShootProjectile()
+    {
+        ObjectPoolingManager.SpawnObject(_mainProjectile, _projectileSpawnPosition.position, Quaternion.identity);
+        _primaryFireCooldown = _playerData.FireRate;
     }
 
     #endregion

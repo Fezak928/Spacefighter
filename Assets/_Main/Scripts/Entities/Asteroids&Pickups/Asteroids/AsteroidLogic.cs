@@ -1,25 +1,28 @@
 using UnityEngine;
 
-public class AsteroidLogicController : BaseMovementController, IMovable, IDamageable
+public class AsteroidLogic : BaseMovementController, IMovable, IDamageable
 {
     [SerializeField] private DamageableEntityDataSO _asteroidData;
-
-    [SerializeField] private float _lifeTime = 5f; // Temporary placeholder
 
     public Vector2 Velocity { get; set; }
     public int CurrentHitpoints { get; set; }
 
+    private Camera _camera;
+
     private void OnEnable()
     {
-        _lifeTime = 5f;
+        if (_camera == null)
+        {
+            _camera = GameManager.instance.PixelPerfectCamera;
+        }
     }
 
     private void FixedUpdate()
     {
-        if(_lifeTime > 0f)
-            _lifeTime -= Time.fixedDeltaTime;
-        else
+        if(IsObjectBelowCameraView() && _camera != null)
+        {
             Die();
+        }
 
         HandleVelocity(Vector2.down);
     }
@@ -53,5 +56,17 @@ public class AsteroidLogicController : BaseMovementController, IMovable, IDamage
             player.TakeDamage(1);
             Die();
         }
+    }
+
+    private bool IsObjectBelowCameraView()
+    {
+        Vector3 viewportPosition = _camera.WorldToViewportPoint(transform.position);
+
+        if(viewportPosition.y < -0.25f)
+        {
+            return true;
+        }
+
+        return false;
     }
 }
