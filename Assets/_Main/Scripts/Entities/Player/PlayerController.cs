@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(CollisionAndMovementController))]
 public class PlayerController : MonoBehaviour, IMovable, IDamageable
 {
     [SerializeField]
@@ -63,7 +64,7 @@ public class PlayerController : MonoBehaviour, IMovable, IDamageable
     {
         HandleVelocity(_movementInput);
 
-        _movementController.Move(Velocity * Time.fixedDeltaTime);
+        _movementController.ApplyVelocity(Velocity * Time.fixedDeltaTime);
     }
 
     #region Health

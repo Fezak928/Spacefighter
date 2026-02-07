@@ -1,7 +1,9 @@
 using System;
 using UnityEngine;
 
-public class CollisionAndMovementController : MonoBehaviour
+[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(Rigidbody2D))]
+public class CollisionAndMovementController : BaseMovementController
 {
     public const float CollisionPadding = 0.015f;
 
@@ -19,8 +21,6 @@ public class CollisionAndMovementController : MonoBehaviour
     public bool CollidingLeft { get; private set; }
     public bool CollidingRight { get; private set; }
 
-    private Rigidbody2D _rigidbody;
-
     public struct RaycastCorners
     {
         public Vector2 topLeft;
@@ -29,10 +29,10 @@ public class CollisionAndMovementController : MonoBehaviour
         public Vector2 bottomRight;
     }
 
-    private void Awake()
+    protected override void Awake()
     {
         _collider = GetComponent<BoxCollider2D>();
-        _rigidbody = GetComponent<Rigidbody2D>();
+        base.Awake();
     }
 
     private void Start()
@@ -40,7 +40,7 @@ public class CollisionAndMovementController : MonoBehaviour
         CalculateRaySpacing();
     }
 
-    public void Move(Vector2 velocity)
+    public void ApplyVelocity(Vector2 velocity)
     {
         UpdateRaycastCorners();
         ResetCollisionStates();
@@ -48,17 +48,7 @@ public class CollisionAndMovementController : MonoBehaviour
         ResolveHorizontalMovement(ref velocity);
         ResolveVerticalMovement(ref velocity);
 
-        Vector2 startingPosition = _rigidbody.position;
-
-        startingPosition = ClampToPixelPerfectUnits(startingPosition, GameManager.instance.PixelsPerUnit);
-        velocity = ClampToPixelPerfectUnits(velocity, GameManager.instance.PixelsPerUnit);
-
-        _rigidbody.MovePosition(startingPosition + velocity);
-    }
-
-    private Vector2 ClampToPixelPerfectUnits(Vector2 vector, int pixelsPerUnit)
-    {
-        return PixelPerfectClamp.ClampVector2ToPixelUnit(vector, pixelsPerUnit);
+        Move(velocity);
     }
 
     private void ResolveVerticalMovement(ref Vector2 velocity)
