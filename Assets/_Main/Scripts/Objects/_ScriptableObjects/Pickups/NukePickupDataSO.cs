@@ -5,6 +5,12 @@ public class NukePickupDataSO : CorePickupDataSO
 {
     public override void OnTriggerEnterLogic(PlayerController player)
     {
-        GameManager.instance.AddNuke();
+        player.PickedUpNuke();
+    }
+
+    public override void OnReturnToPoolLogic(GameObject obj)
+    {
+        SpawnManager.Instance.NukePickupDespawned();
+        base.OnReturnToPoolLogic(obj);
     }
 }

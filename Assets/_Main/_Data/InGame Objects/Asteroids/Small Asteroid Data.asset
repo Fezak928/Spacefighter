@@ -13,6 +13,13 @@ MonoBehaviour:
   m_Name: Small Asteroid Data
   m_EditorClassIdentifier: Assembly-CSharp::AsteroidDataSO
   MovementSpeed: 20
+  clips:
+  - {fileID: 8300000, guid: c8052e1bb17eeef4da9b0750831ebec5, type: 3}
+  - {fileID: 8300000, guid: 76ac33c33410b9e448db186566b25a97, type: 3}
+  - {fileID: 8300000, guid: fa93a5eb304be304baed749306427d69, type: 3}
+  - {fileID: 8300000, guid: 94e72eafb5d29d542970835856a4f248, type: 3}
   Damage: 2
+  ShakeMagnitude: 0.25
+  HitStopDuration: 0.25
   HitPoints: 1
   ScoreValue: 1000

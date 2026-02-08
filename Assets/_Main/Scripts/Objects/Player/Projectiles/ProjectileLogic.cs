@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ProjectileLogic : BaseMovementController
 {
-    [SerializeField] private ProjectileDataSO _projectileData;
+    [SerializeField] protected ProjectileDataSO ProjectileData;
     [SerializeField, Range(0f, 1f)] private float _threshold = 0.01f;
 
     private Camera _camera;
@@ -11,42 +11,67 @@ public class ProjectileLogic : BaseMovementController
     {
         if (_camera == null)
         {
-            _camera = GameManager.instance.PixelPerfectCamera;
+            _camera = GameManager.Instance.PixelPerfectCamera;
         }
+
+        AudioManagerSO.PlaySFX(ProjectileData.clips, transform.position, 1f);
     }
 
     private void FixedUpdate()
     {
-        if (IsObjectAboveCameraView() && _camera != null)
+        if (IsObjectAboveCameraView(_threshold) && _camera != null)
         {
             ReturnToPool();
         }
 
-        Vector2 velocity = Vector2.up * _projectileData.MovementSpeed;
+        Vector2 velocity = Vector2.up * ProjectileData.MovementSpeed;
         Move(velocity * Time.fixedDeltaTime);
     }
 
-    private void ReturnToPool()
+    protected void ReturnToPool()
     {
         ObjectPoolingManager.ReturnObjectToPool(gameObject, ObjectPoolingManager.PoolType.Projectiles);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Asteroid"))
+        if (collision.gameObject.CompareTag("Asteroid") && !IsObjectAboveCameraView(0f))
         {
             IDamageable asteroid = collision.gameObject.GetComponent<IDamageable>();
 
-            asteroid.TakeDamage(_projectileData.Damage);
-            ReturnToPool();
+            if (asteroid.CurrentHitpoints == ProjectileData.Damage)
+            {
+                CameraEffects.Instance.PerformHitstop(ProjectileData.HitStopDuration);
+                CameraEffects.Instance.PerformCameraShake(ProjectileData.HitStopDuration, ProjectileData.ShakeMagnitude);
+            }
+                
+
+            OnImpactEvent(asteroid);
         }
     }
 
-    private bool IsObjectAboveCameraView()
+    protected void OnImpactEvent(IDamageable damageable)
+    {
+        damageable.TakeDamage(ProjectileData.Damage);
+        ReturnToPool();
+    }
+
+    protected void OnImpactEvent(Collider2D[] colliders)
+    {
+        foreach (Collider2D collider in colliders)
+        {
+            IDamageable damageable = collider.GetComponent<IDamageable>();
+
+            damageable.TakeDamage(ProjectileData.Damage);
+        }
+        ReturnToPool();
+    }
+
+    private bool IsObjectAboveCameraView(float offset)
     {
         Vector3 viewportPosition = _camera.WorldToViewportPoint(transform.position);
 
-        if (viewportPosition.y > 1 + _threshold)
+        if (viewportPosition.y > 1 + offset)
             return true;
 
         return false;

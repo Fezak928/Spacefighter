@@ -13,4 +13,8 @@ MonoBehaviour:
   m_Name: HP Pickup Data
   m_EditorClassIdentifier: Assembly-CSharp::HPPickupDataSO
   MovementSpeed: 10
+  clips:
+  - {fileID: 8300000, guid: a9d8471c7938d9b47b4d0edc51fc36f7, type: 3}
+  - {fileID: 8300000, guid: 8dc56fa7c0cff1d4b9411dae0117b744, type: 3}
+  - {fileID: 8300000, guid: 16b5ee0b9710bd449b6f47261757e051, type: 3}
   HealPoints: 1

@@ -3,50 +3,97 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager instance;
+    public static GameManager Instance;
     [field: SerializeField, Range(1,64)] public int PixelsPerUnit { get; private set; } = 16;
     [field: SerializeField] public Camera PixelPerfectCamera { get; private set; }
-    [field: SerializeField] public PlayerController Player { get; private set; }
 
-    [SerializeField]
-    private GameObject[] _hpDisplay, _nukeDisplay;
+    [SerializeField] private GameObject[] _hpDisplay, _shieldDisplay, _nukeDisplay;
 
-    [SerializeField, Range(1,5)] private int _maximumNukeAmount = 5;
+    [field: SerializeField, Range(1,5)] public int MaximumNukeAmount { get; private set; } = 5;
     public int CurrentNukeAmount { get; private set; }
 
-    private int _currentScore;
+    [field: SerializeField] public int CurrentScore { get; private set; }
     [SerializeField] TextMeshProUGUI _scoreDisplay;
+
+    public float RunPlayTime = 0f;
+
+    [SerializeField] private GameObject _gameOverMenu;
+
+    #region Initialization
+
+    private void OnEnable()
+    {
+        PlayerController.TookDamageEvent += RemoveHPDisplayHeart;
+        PlayerController.HealedEvent += AddHPDisplayHeart;
+        PlayerController.UsedNukeEvent += UseNuke;
+        PlayerController.PickedUpNukeEvent += AddNuke;
+        PlayerController.PickedUpShieldEvent += FillShieldDisplay;
+        PlayerController.ShieldTookDamageEvent += RemoveShield;
+
+        PlayerController.PlayerDead += OnPlayerDead;
+    }
+
+    private void OnDisable()
+    {
+        PlayerController.TookDamageEvent -= RemoveHPDisplayHeart;
+        PlayerController.HealedEvent -= AddHPDisplayHeart;
+        PlayerController.UsedNukeEvent -= UseNuke;
+        PlayerController.PickedUpNukeEvent -= AddNuke;
+        PlayerController.PickedUpShieldEvent -= FillShieldDisplay;
+        PlayerController.ShieldTookDamageEvent -= RemoveShield;
+
+        PlayerController.PlayerDead -= OnPlayerDead;
+    }
 
     private void Awake()
     {
-        if (instance != null && instance != this)
-            Destroy(this);
-        else
-            instance = this;
-
-        CurrentNukeAmount = _maximumNukeAmount;
-
-        if (Player == null)
+        if (Instance != null && Instance != this)
         {
-            Player = FindFirstObjectByType<PlayerController>();
+            Destroy(this);
         }
+            
+        else
+            Instance = this;
 
+        Time.timeScale = 1f;
+        CurrentScore = 0;
+
+        _gameOverMenu.SetActive(false);
         UpdateScore(0);
     }
 
-    public void RemoveHPDisplayHeart(int currentHP)
+    #endregion
+
+    private void Update()
+    {
+        RunPlayTime += Time.deltaTime;
+    }
+
+    #region HUD Display
+
+    public void FillShieldDisplay()
+    {
+        AddToDisplayArray(_shieldDisplay, _shieldDisplay.Length);
+    }
+
+    public void RemoveShield(int shieldHP)
+    {
+        RemoveFromDisplayArray(_shieldDisplay, shieldHP);
+    }
+
+    public void RemoveHPDisplayHeart(int currentHP, int damage)
     {
         RemoveFromDisplayArray(_hpDisplay, currentHP);
     }
 
-    public void AddHPDisplayHeart(int currentHP)
+    public void AddHPDisplayHeart(int currentHP, int heal)
     {
         AddToDisplayArray(_hpDisplay, currentHP);
     }
 
     public bool AreNukesMaxedOut()
     {
-        return CurrentNukeAmount >= _maximumNukeAmount;
+        return CurrentNukeAmount >= MaximumNukeAmount;
     }
 
     public void AddNuke()
@@ -86,9 +133,22 @@ public class GameManager : MonoBehaviour
 
     public void UpdateScore(int scorepoints)
     {
-        _currentScore += scorepoints;
+        CurrentScore += scorepoints;
 
-        _scoreDisplay.text = $"Score: {_currentScore}";
-
+        _scoreDisplay.text = $"Score: {CurrentScore}";
     }
+
+
+
+    #endregion
+
+    #region Game Over
+
+    public void OnPlayerDead()
+    {
+        Time.timeScale = 0f;
+        _gameOverMenu.SetActive(true);
+    }
+
+    #endregion
 }

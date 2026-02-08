@@ -13,3 +13,6 @@ MonoBehaviour:
   m_Name: Nuke Pickup Data
   m_EditorClassIdentifier: Assembly-CSharp::NukePickupDataSO
   MovementSpeed: 10
+  clips:
+  - {fileID: 8300000, guid: 46684f453e31e3f4aa237ba45b147e55, type: 3}
+  - {fileID: 8300000, guid: b9aea9f4f937e334b89947594ccffc1f, type: 3}

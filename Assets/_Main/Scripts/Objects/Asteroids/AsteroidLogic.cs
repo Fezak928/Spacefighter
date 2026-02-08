@@ -5,6 +5,7 @@ public class AsteroidLogic : BaseMovementController, IDamageable
     [SerializeField] private AsteroidDataSO _asteroidData;
     [SerializeField, Range(0f, 1f)] private float _threshold = 0.25f;
     public int CurrentHitpoints { get; set; }
+    public bool CanTakeDamage { get; set; }
 
     private Camera _camera;
 
@@ -12,7 +13,7 @@ public class AsteroidLogic : BaseMovementController, IDamageable
     {
         if (_camera == null)
         {
-            _camera = GameManager.instance.PixelPerfectCamera;
+            _camera = GameManager.Instance.PixelPerfectCamera;
         }
 
         CurrentHitpoints = _asteroidData.HitPoints;
@@ -31,6 +32,9 @@ public class AsteroidLogic : BaseMovementController, IDamageable
 
     public void TakeDamage(int damage)
     {
+        if (CurrentHitpoints <= 0)
+            return;
+
         CurrentHitpoints -= damage;
 
         if (CurrentHitpoints <= 0)
@@ -39,7 +43,8 @@ public class AsteroidLogic : BaseMovementController, IDamageable
 
     public void Die()
     {
-        GameManager.instance.UpdateScore(_asteroidData.ScoreValue);
+        GameManager.Instance.UpdateScore(_asteroidData.ScoreValue);
+        AudioManagerSO.PlaySFX(_asteroidData.clips, transform.position, 1f);
         ReturnToPool();
     }
 
@@ -52,10 +57,20 @@ public class AsteroidLogic : BaseMovementController, IDamageable
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            CurrentHitpoints = 0;
+
             IDamageable player = collision.gameObject.GetComponent<IDamageable>();
 
+            if (player.CanTakeDamage)
+            {
+                CameraEffects.Instance.PerformHitstop(_asteroidData.HitStopDuration);
+                CameraEffects.Instance.PerformCameraShake(_asteroidData.HitStopDuration, _asteroidData.ShakeMagnitude);
+            }
+            else
+                AudioManagerSO.PlaySFX(_asteroidData.clips, transform.position, 1f);
+
             player.TakeDamage(_asteroidData.Damage);
-            Die();
+            ReturnToPool();
         }
     }
 

@@ -11,7 +11,7 @@ public class PickupLogic : BaseMovementController
     {
         if (_camera == null)
         {
-            _camera = GameManager.instance.PixelPerfectCamera;
+            _camera = GameManager.Instance.PixelPerfectCamera;
         }
     }
 
@@ -26,7 +26,7 @@ public class PickupLogic : BaseMovementController
 
     private void ReturnToPool()
     {
-        ObjectPoolingManager.ReturnObjectToPool(gameObject);
+        _pickupData.OnReturnToPoolLogic(gameObject);
     }
 
     private bool IsObjectBelowCameraView()
@@ -46,6 +46,7 @@ public class PickupLogic : BaseMovementController
             PlayerController player = collision.gameObject.GetComponent<PlayerController>();
 
             _pickupData.OnTriggerEnterLogic(player);
+            AudioManagerSO.PlaySFX(_pickupData.clips, transform.position, 1f);
             ReturnToPool();
         }
     }

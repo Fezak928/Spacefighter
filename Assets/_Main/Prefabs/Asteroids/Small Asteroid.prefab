@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1382846329063164510}
   - component: {fileID: 7985982420198234210}
   - component: {fileID: 1121514903270932938}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Small Asteroid
   m_TagString: Asteroid
   m_Icon: {fileID: 0}
@@ -170,4 +170,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AsteroidLogicController
   _asteroidData: {fileID: 11400000, guid: 7f4024cc8bbf6e64eaf4cbdf298582e8, type: 2}
-  _threshold: 0.25
+  _threshold: 0.5

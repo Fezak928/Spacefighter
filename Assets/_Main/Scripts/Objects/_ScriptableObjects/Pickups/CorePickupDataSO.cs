@@ -6,4 +6,9 @@ public abstract class CorePickupDataSO : CoreObjectDataSO
     {
 
     }
+
+    public virtual void OnReturnToPoolLogic(GameObject obj)
+    {
+        ObjectPoolingManager.ReturnObjectToPool(obj);
+    }
 }

@@ -13,4 +13,10 @@ MonoBehaviour:
   m_Name: Standard Bullet Data
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileDataSO
   MovementSpeed: 10
+  clips:
+  - {fileID: 8300000, guid: eef5fcebc7641c84ea8649a444cf12ea, type: 3}
+  - {fileID: 8300000, guid: 6f60a1c346034aa4f8aed91ff7742cc7, type: 3}
+  - {fileID: 8300000, guid: a3bb6aa212a80294e9e5f329cb7dcb40, type: 3}
   Damage: 1
+  ShakeMagnitude: 0.125
+  HitStopDuration: 0.125

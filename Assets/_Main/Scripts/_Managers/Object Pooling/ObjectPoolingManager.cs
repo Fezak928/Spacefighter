@@ -11,11 +11,12 @@ public class ObjectPoolingManager : MonoBehaviour
     private static GameObject _objectEmpty;
     private static GameObject _projectilesEmpty;
     private static GameObject _sfxEmpty;
+    private static GameObject _vfxEmpty;
 
     private static Dictionary<GameObject, ObjectPool<GameObject>> _objectPools;
     private static Dictionary<GameObject, GameObject> _cloneToPrefabMap;
 
-    public enum PoolType { GameObjects, Projectiles, SFXs}
+    public enum PoolType { GameObjects, Projectiles, SFXs, VFXs}
 
     public static PoolType PoolingType;
 
@@ -39,6 +40,9 @@ public class ObjectPoolingManager : MonoBehaviour
 
         _sfxEmpty = new GameObject("SFXs");
         _sfxEmpty.transform.SetParent(_emptyHolder.transform);
+
+        _vfxEmpty = new GameObject("VFXs");
+        _vfxEmpty.transform.SetParent(_emptyHolder.transform);
 
         if (_dontDestroyOnLoad)
         {
@@ -84,6 +88,9 @@ public class ObjectPoolingManager : MonoBehaviour
 
             case PoolType.SFXs:
                 return _sfxEmpty;
+
+            case PoolType.VFXs:
+                return _vfxEmpty;
 
             default:
                 return null;

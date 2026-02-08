@@ -14,8 +14,8 @@ public class BaseMovementController : MonoBehaviour
     {
         Vector2 startingPosition = ObjectRigidbody.position;
 
-        startingPosition = ClampToPixelPerfectUnits(startingPosition, GameManager.instance.PixelsPerUnit);
-        velocity = ClampToPixelPerfectUnits(velocity, GameManager.instance.PixelsPerUnit);
+        startingPosition = ClampToPixelPerfectUnits(startingPosition, GameManager.Instance.PixelsPerUnit);
+        velocity = ClampToPixelPerfectUnits(velocity, GameManager.Instance.PixelsPerUnit);
 
         ObjectRigidbody.MovePosition(startingPosition + velocity);
     }

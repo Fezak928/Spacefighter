@@ -4,31 +4,63 @@ using System.Collections.Generic;
 [RequireComponent(typeof(BoxCollider2D))]
 public class SpawnManager : MonoBehaviour
 {
-    [SerializeField] private float _spawnRate = 5f;
+    public static SpawnManager Instance;
 
-    [SerializeField] private GameObject _hpPickup, _nukePickup;
+    [SerializeField] private float _spawnRate = 5f;
+    [SerializeField] private AnimationCurve _spawnCurve;
+
+    [SerializeField, Range(0f, 100f)] private float _pickupSpawnChance = 13;
+    [SerializeField] private GameObject _hpPickup, _nukePickup, _shieldPickup;
     [SerializeField] private GameObject[] _asteroids;
     [SerializeField] private Camera _pixelPerfectCamera;
 
     private BoxCollider2D _spawningRegion;
-    private List<GameObject> _currentlySpawnableObjects = new();
+    private List<GameObject> _currentlySpawnablePickups = new();
 
     private float _spawnTimer;
-    private PlayerController _player;
+
+    private int _amountOfSpawnableNukes, _amountOfSpawnableHPPickups, _amountOfSpawnableShields;
+    private int _currentlySpawnedNukes, _currentlySpawnedHPPickups, _currentlySpawnedShields;
+
+    #region Initialization
+
+    private void OnEnable()
+    {
+        PlayerController.PickedUpNukeEvent += OnPickedUpNuke;
+        PlayerController.UsedNukeEvent += OnUsedNuke;
+        PlayerController.HealedEvent += OnHeal;
+        PlayerController.TookDamageEvent += OnTakenDamage;
+
+        PlayerController.PickedUpShieldEvent += OnPickedUpShield;
+        PlayerController.ShieldDestroyedEvent += OnDestroyedShield;
+    }
+
+    private void OnDisable()
+    {
+        PlayerController.PickedUpNukeEvent -= OnPickedUpNuke;
+        PlayerController.UsedNukeEvent -= OnUsedNuke;
+        PlayerController.HealedEvent -= OnHeal;
+        PlayerController.TookDamageEvent -= OnTakenDamage;
+
+        PlayerController.PickedUpShieldEvent -= OnPickedUpShield;
+        PlayerController.ShieldDestroyedEvent -= OnDestroyedShield;
+    }
 
     private void Awake()
     {
-        _spawningRegion = GetComponent<BoxCollider2D>();
+        if (Instance != null && Instance != this)
+            Destroy(this);
 
-        foreach(var asteroid in _asteroids)
-        {
-            _currentlySpawnableObjects.Add(asteroid);
-        }
+        Instance = this;
     }
+
+    #endregion
 
     private void Start()
     {
-        _player = GameManager.instance.Player;
+        _spawningRegion = GetComponent<BoxCollider2D>();
+        _amountOfSpawnableNukes = GameManager.Instance.MaximumNukeAmount;
+        _amountOfSpawnableShields = 1;
     }
 
     private void Update()
@@ -40,30 +72,99 @@ public class SpawnManager : MonoBehaviour
             Spawn();
     }
 
+    #region Spawning Variable Functions
+
+    private void OnPickedUpShield()
+    {
+        _amountOfSpawnableShields--;
+    }
+
+    private void OnDestroyedShield()
+    {
+        _amountOfSpawnableShields++;
+    }
+
+    public void ShieldPickupDespawned()
+    {
+        _currentlySpawnedShields--;
+    }
+
+    private void OnUsedNuke()
+    {
+        _amountOfSpawnableNukes++;
+    }
+
+    private void OnPickedUpNuke()
+    {
+        _amountOfSpawnableNukes--;
+    }
+
+    public void NukePickupDespawned()
+    {
+        _currentlySpawnedNukes--;
+    }
+
+    private void OnHeal(int currentHP, int heal)
+    {
+        _amountOfSpawnableHPPickups -= heal;
+    }
+
+    public void HPPickupDespawned()
+    {
+        _currentlySpawnedHPPickups--;
+    }
+
+    private void OnTakenDamage(int currentHP, int damage)
+    {
+        _amountOfSpawnableHPPickups += damage;
+    }
+
     private void UpdateSpawnables()
     {
-        if (CanSpawnHPPickups() && !_currentlySpawnableObjects.Contains(_hpPickup))
-            _currentlySpawnableObjects.Add(_hpPickup);
+        if (CanSpawnHPPickups() && !_currentlySpawnablePickups.Contains(_hpPickup))
+            _currentlySpawnablePickups.Add(_hpPickup);
 
         else if (!CanSpawnHPPickups())
-            _currentlySpawnableObjects.Remove(_hpPickup);
+            _currentlySpawnablePickups.Remove(_hpPickup);
 
-        if (CanSpawnNukePickups() && !_currentlySpawnableObjects.Contains(_nukePickup))
-            _currentlySpawnableObjects.Add(_nukePickup);
+        if (CanSpawnNukePickups() && !_currentlySpawnablePickups.Contains(_nukePickup))
+            _currentlySpawnablePickups.Add(_nukePickup);
 
         else if (!CanSpawnNukePickups())
-            _currentlySpawnableObjects.Remove(_nukePickup);
+            _currentlySpawnablePickups.Remove(_nukePickup);
+
+        if (CanSpawnShields() && !_currentlySpawnablePickups.Contains(_shieldPickup))
+            _currentlySpawnablePickups.Add(_shieldPickup);
+        else if (!CanSpawnShields())
+            _currentlySpawnablePickups.Remove(_shieldPickup);
     }
 
     private bool CanSpawnHPPickups()
     {
-        return _player.CurrentHitpoints != _player.PlayerData.HitPoints;
+        if (_currentlySpawnedHPPickups < _amountOfSpawnableHPPickups)
+            return true;
+
+        return false;
     }
 
     private bool CanSpawnNukePickups()
     {
-        return !GameManager.instance.AreNukesMaxedOut();
+        if (_currentlySpawnedNukes < _amountOfSpawnableNukes)
+            return true;
+
+        return false;
     }
+
+    private bool CanSpawnShields()
+    {
+        if(_currentlySpawnedShields < _amountOfSpawnableShields)
+            return true;
+
+        return false;
+    }
+    #endregion
+
+    #region Spawning logic
 
     private void Spawn()
     {
@@ -84,17 +185,44 @@ public class SpawnManager : MonoBehaviour
 
     private GameObject PickObjectToSpawn()
     {
-        int selectedID = Random.Range(0, _currentlySpawnableObjects.Count);
+        float chanceValue = Random.Range(0f, 100f);
+        bool pickup = false;
+        List<GameObject> spawnableObjectsList = new List<GameObject>();
 
-        return _currentlySpawnableObjects[selectedID];
+        foreach(var asteroid in _asteroids)
+        {
+            spawnableObjectsList.Add(asteroid);
+        }
+
+        if(chanceValue <= _pickupSpawnChance && _currentlySpawnablePickups.Count != 0)
+        {
+            spawnableObjectsList = _currentlySpawnablePickups;
+            pickup = true;
+        }
+
+        int selectedID = Random.Range(0, spawnableObjectsList.Count);
+
+        if (pickup)
+        {
+            if (_currentlySpawnablePickups[selectedID] == _nukePickup)
+                _currentlySpawnedNukes++;
+
+            if (_currentlySpawnablePickups[selectedID] == _hpPickup)
+                _currentlySpawnedHPPickups++;
+
+            if (_currentlySpawnablePickups[selectedID] == _shieldPickup)
+                _currentlySpawnedShields++;
+        }
+
+        return spawnableObjectsList[selectedID];
     }
+
+    #endregion
 
     private void Timer()
     {
         if(_spawnTimer > 0f)
-        {
             _spawnTimer -= Time.deltaTime;
-        }
     }
 
 }

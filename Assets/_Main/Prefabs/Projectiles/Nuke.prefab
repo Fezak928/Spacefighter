@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7876580209644804021}
   - component: {fileID: 2737617594580427285}
   - component: {fileID: 853180255520348572}
-  - component: {fileID: 4708663166356134343}
+  - component: {fileID: -7733733019574956729}
   m_Layer: 0
   m_Name: Nuke
   m_TagString: Untagged
@@ -110,7 +110,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.4375, y: 0.375}
   m_EdgeRadius: 0
---- !u!114 &4708663166356134343
+--- !u!114 &-7733733019574956729
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,11 +119,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1776590787736541714}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e1301412b6e93454985da53024fe7266, type: 3}
+  m_Script: {fileID: 11500000, guid: f247f9de350eea34a85427f4e76c52fe, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectileLogic
-  _projectileData: {fileID: 11400000, guid: 39f66b8548816e84bb31a131b14f7623, type: 2}
-  _threshold: 0.01
+  m_EditorClassIdentifier: Assembly-CSharp::NukeProjectileLogic
+  ProjectileData: {fileID: 11400000, guid: 39f66b8548816e84bb31a131b14f7623, type: 2}
+  _threshold: 0.25
+  _explosionClips:
+  - {fileID: 8300000, guid: 2ac6ab231a7623042bc70c97944b5557, type: 3}
+  - {fileID: 8300000, guid: 6847b1881375f91428b760f2836894ae, type: 3}
+  - {fileID: 8300000, guid: 91f9bc2cb3853ce4b8367c4d905e1883, type: 3}
+  _areaOfEffect: 5
+  _affectedObjectsLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &7141056575890765418
 GameObject:
   m_ObjectHideFlags: 0

@@ -178,5 +178,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1301412b6e93454985da53024fe7266, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileLogic
-  _projectileData: {fileID: 11400000, guid: cafd792e57d2c674ab2891a6687625ca, type: 2}
-  _threshold: 0.01
+  ProjectileData: {fileID: 11400000, guid: cafd792e57d2c674ab2891a6687625ca, type: 2}
+  _threshold: 0.25
