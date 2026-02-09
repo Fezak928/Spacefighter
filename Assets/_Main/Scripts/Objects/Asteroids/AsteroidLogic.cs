@@ -4,8 +4,11 @@ public class AsteroidLogic : BaseMovementController, IDamageable
 {
     [SerializeField] private AsteroidDataSO _asteroidData;
     [SerializeField, Range(0f, 1f)] private float _threshold = 0.25f;
+    [SerializeField] private ScorePopup _scorePopup;
     public int CurrentHitpoints { get; set; }
     public bool CanTakeDamage { get; set; }
+
+    private float _movementSpeed;
 
     private Camera _camera;
 
@@ -17,6 +20,8 @@ public class AsteroidLogic : BaseMovementController, IDamageable
         }
 
         CurrentHitpoints = _asteroidData.HitPoints;
+
+        _movementSpeed = Random.Range(_asteroidData.MovementSpeed - _asteroidData.MovementSpeedChange, _asteroidData.MovementSpeed + _asteroidData.MovementSpeedChange);
     }
 
     private void FixedUpdate()
@@ -26,7 +31,7 @@ public class AsteroidLogic : BaseMovementController, IDamageable
             ReturnToPool();
         }
 
-        Vector2 velocity = Vector2.down * _asteroidData.MovementSpeed;
+        Vector2 velocity = Vector2.down * _movementSpeed;
         Move(velocity * Time.fixedDeltaTime);
     }
 
@@ -35,6 +40,7 @@ public class AsteroidLogic : BaseMovementController, IDamageable
         if (CurrentHitpoints <= 0)
             return;
 
+        AudioManagerSO.PlaySFX(_asteroidData.clips, transform.position, 1f);
         CurrentHitpoints -= damage;
 
         if (CurrentHitpoints <= 0)
@@ -43,8 +49,11 @@ public class AsteroidLogic : BaseMovementController, IDamageable
 
     public void Die()
     {
+        ScorePopup popup = ObjectPoolingManager.SpawnObject(_scorePopup, transform.position, Quaternion.identity, ObjectPoolingManager.PoolType.VFXs);
+
+        popup.StartCoroutine(popup.ReturnToPool(_asteroidData.ScoreValue));
+
         GameManager.Instance.UpdateScore(_asteroidData.ScoreValue);
-        AudioManagerSO.PlaySFX(_asteroidData.clips, transform.position, 1f);
         ReturnToPool();
     }
 
@@ -55,7 +64,7 @@ public class AsteroidLogic : BaseMovementController, IDamageable
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") && CurrentHitpoints > 0)
         {
             CurrentHitpoints = 0;
 

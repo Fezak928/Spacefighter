@@ -171,3 +171,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AsteroidLogicController
   _asteroidData: {fileID: 11400000, guid: 1cbfffdf6448c8c44bebeb570080f87e, type: 2}
   _threshold: 0.5
+  _scorePopup: {fileID: -5975936287475408095, guid: 16c002ef3b7391745bcadf38b8c0b0e5, type: 3}

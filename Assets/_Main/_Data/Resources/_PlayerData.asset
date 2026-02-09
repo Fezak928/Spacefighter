@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1c8a53188592f14a9b14723518f69f3, type: 3}
   m_Name: _PlayerData
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDataSO
-  MovementSpeed: 10
+  MovementSpeed: 12
   clips:
   - {fileID: 8300000, guid: 0a06cb5c45df7be409500bb3d100850d, type: 3}
   - {fileID: 8300000, guid: f95832dcf7811d2418702fb7301b7da4, type: 3}
