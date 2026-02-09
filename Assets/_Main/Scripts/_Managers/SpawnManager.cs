@@ -6,7 +6,8 @@ public class SpawnManager : MonoBehaviour
 {
     public static SpawnManager Instance;
 
-    [SerializeField] private float _spawnRate = 5f;
+    [SerializeField] private float _timeToFastestSpawnRate = 5f;
+    private float _currentSpawnRate;
     [SerializeField] private AnimationCurve _spawnCurve;
 
     [SerializeField, Range(0f, 100f)] private float _pickupSpawnChance = 13;
@@ -22,8 +23,9 @@ public class SpawnManager : MonoBehaviour
     private int _amountOfSpawnableNukes, _amountOfSpawnableHPPickups, _amountOfSpawnableShields;
     private int _currentlySpawnedNukes, _currentlySpawnedHPPickups, _currentlySpawnedShields;
 
-    #region Initialization
+    private bool _isPlayerDead;
 
+    #region Initialization
     private void OnEnable()
     {
         PlayerController.PickedUpNukeEvent += OnPickedUpNuke;
@@ -33,6 +35,8 @@ public class SpawnManager : MonoBehaviour
 
         PlayerController.PickedUpShieldEvent += OnPickedUpShield;
         PlayerController.ShieldDestroyedEvent += OnDestroyedShield;
+
+        PlayerController.PlayerDead += OnPlayerDead;
     }
 
     private void OnDisable()
@@ -44,6 +48,8 @@ public class SpawnManager : MonoBehaviour
 
         PlayerController.PickedUpShieldEvent -= OnPickedUpShield;
         PlayerController.ShieldDestroyedEvent -= OnDestroyedShield;
+
+        PlayerController.PlayerDead -= OnPlayerDead;
     }
 
     private void Awake()
@@ -61,6 +67,8 @@ public class SpawnManager : MonoBehaviour
         _spawningRegion = GetComponent<BoxCollider2D>();
         _amountOfSpawnableNukes = GameManager.Instance.MaximumNukeAmount;
         _amountOfSpawnableShields = 1;
+
+        _isPlayerDead = false;
     }
 
     private void Update()
@@ -68,7 +76,9 @@ public class SpawnManager : MonoBehaviour
         Timer();
         UpdateSpawnables();
 
-        if (_spawnTimer <= 0f)
+        _currentSpawnRate = _spawnCurve.Evaluate(GameManager.Instance.RunPlayTime/_timeToFastestSpawnRate);
+
+        if (_spawnTimer <= 0f && !_isPlayerDead)
             Spawn();
     }
 
@@ -172,7 +182,7 @@ public class SpawnManager : MonoBehaviour
         Vector3 spawningPosition = GetRandomStartingPosition(_spawningRegion.bounds);
 
         ObjectPoolingManager.SpawnObject(objectToBeSpawned, spawningPosition, Quaternion.identity);
-        _spawnTimer = _spawnRate;
+        _spawnTimer = _currentSpawnRate;
     }
 
     private Vector3 GetRandomStartingPosition(Bounds bounds)
@@ -223,6 +233,11 @@ public class SpawnManager : MonoBehaviour
     {
         if(_spawnTimer > 0f)
             _spawnTimer -= Time.deltaTime;
+    }
+
+    private void OnPlayerDead()
+    {
+        _isPlayerDead = true;
     }
 
 }

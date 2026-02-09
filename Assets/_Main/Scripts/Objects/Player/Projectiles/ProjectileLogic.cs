@@ -4,6 +4,7 @@ public class ProjectileLogic : BaseMovementController
 {
     [SerializeField] protected ProjectileDataSO ProjectileData;
     [SerializeField, Range(0f, 1f)] private float _threshold = 0.01f;
+    protected bool _hasHit;
 
     private Camera _camera;
 
@@ -15,6 +16,7 @@ public class ProjectileLogic : BaseMovementController
         }
 
         AudioManagerSO.PlaySFX(ProjectileData.clips, transform.position, 1f);
+        _hasHit = false;
     }
 
     private void FixedUpdate()
@@ -35,17 +37,17 @@ public class ProjectileLogic : BaseMovementController
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Asteroid") && !IsObjectAboveCameraView(0f))
+        if (collision.gameObject.CompareTag("Asteroid") && !IsObjectAboveCameraView(0f) && !_hasHit)
         {
             IDamageable asteroid = collision.gameObject.GetComponent<IDamageable>();
+            _hasHit = true;
 
             if (asteroid.CurrentHitpoints == ProjectileData.Damage)
             {
                 CameraEffects.Instance.PerformHitstop(ProjectileData.HitStopDuration);
-                CameraEffects.Instance.PerformCameraShake(ProjectileData.HitStopDuration, ProjectileData.ShakeMagnitude);
             }
-                
-
+            CameraEffects.Instance.PerformCameraShake(ProjectileData.HitStopDuration, ProjectileData.ShakeMagnitude);
+            
             OnImpactEvent(asteroid);
         }
     }
@@ -67,7 +69,7 @@ public class ProjectileLogic : BaseMovementController
         ReturnToPool();
     }
 
-    private bool IsObjectAboveCameraView(float offset)
+    protected bool IsObjectAboveCameraView(float offset)
     {
         Vector3 viewportPosition = _camera.WorldToViewportPoint(transform.position);
 

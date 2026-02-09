@@ -8,9 +8,10 @@ public class NukeProjectileLogic : ProjectileLogic
 
     protected override void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Asteroid"))
+        if (collision.gameObject.CompareTag("Asteroid") && !IsObjectAboveCameraView(0f) && !_hasHit)
         {
             Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, _areaOfEffect, _affectedObjectsLayer);
+            _hasHit = true;
 
             CameraEffects.Instance.PerformHitstop(ProjectileData.HitStopDuration);
             CameraEffects.Instance.PerformCameraShake(ProjectileData.HitStopDuration, ProjectileData.ShakeMagnitude);

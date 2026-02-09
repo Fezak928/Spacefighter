@@ -21,5 +21,6 @@ MonoBehaviour:
   Damage: 2
   ShakeMagnitude: 0.75
   HitStopDuration: 0.25
-  HitPoints: 3
-  ScoreValue: 100
+  MovementSpeedChange: 0.5
+  HitPoints: 4
+  ScoreValue: 50

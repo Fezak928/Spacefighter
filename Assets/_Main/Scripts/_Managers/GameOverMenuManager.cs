@@ -40,7 +40,7 @@ public class GameOverMenuManager : MonoBehaviour
 
     public void Retry()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("MainGame");
     }
 
     public void Quit()

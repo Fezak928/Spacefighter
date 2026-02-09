@@ -19,7 +19,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: fa93a5eb304be304baed749306427d69, type: 3}
   - {fileID: 8300000, guid: 94e72eafb5d29d542970835856a4f248, type: 3}
   Damage: 1
-  ShakeMagnitude: 0.125
-  HitStopDuration: 0.125
-  HitPoints: 1
-  ScoreValue: 500
+  ShakeMagnitude: 0.1875
+  HitStopDuration: 0.1875
+  MovementSpeedChange: 2
+  HitPoints: 2
+  ScoreValue: 250

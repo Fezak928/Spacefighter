@@ -7,6 +7,8 @@ public class AsteroidLogic : BaseMovementController, IDamageable
     public int CurrentHitpoints { get; set; }
     public bool CanTakeDamage { get; set; }
 
+    private float _movementSpeed;
+
     private Camera _camera;
 
     private void OnEnable()
@@ -17,6 +19,8 @@ public class AsteroidLogic : BaseMovementController, IDamageable
         }
 
         CurrentHitpoints = _asteroidData.HitPoints;
+
+        _movementSpeed = Random.Range(_asteroidData.MovementSpeed - _asteroidData.MovementSpeedChange, _asteroidData.MovementSpeed + _asteroidData.MovementSpeedChange);
     }
 
     private void FixedUpdate()
@@ -26,7 +30,7 @@ public class AsteroidLogic : BaseMovementController, IDamageable
             ReturnToPool();
         }
 
-        Vector2 velocity = Vector2.down * _asteroidData.MovementSpeed;
+        Vector2 velocity = Vector2.down * _movementSpeed;
         Move(velocity * Time.fixedDeltaTime);
     }
 
@@ -35,6 +39,7 @@ public class AsteroidLogic : BaseMovementController, IDamageable
         if (CurrentHitpoints <= 0)
             return;
 
+        AudioManagerSO.PlaySFX(_asteroidData.clips, transform.position, 1f);
         CurrentHitpoints -= damage;
 
         if (CurrentHitpoints <= 0)
@@ -44,7 +49,6 @@ public class AsteroidLogic : BaseMovementController, IDamageable
     public void Die()
     {
         GameManager.Instance.UpdateScore(_asteroidData.ScoreValue);
-        AudioManagerSO.PlaySFX(_asteroidData.clips, transform.position, 1f);
         ReturnToPool();
     }
 
@@ -55,7 +59,7 @@ public class AsteroidLogic : BaseMovementController, IDamageable
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") && CurrentHitpoints > 0)
         {
             CurrentHitpoints = 0;
 
