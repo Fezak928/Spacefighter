@@ -4,6 +4,7 @@ public class AsteroidLogic : BaseMovementController, IDamageable
 {
     [SerializeField] private AsteroidDataSO _asteroidData;
     [SerializeField, Range(0f, 1f)] private float _threshold = 0.25f;
+    [SerializeField] private ScorePopup _scorePopup;
     public int CurrentHitpoints { get; set; }
     public bool CanTakeDamage { get; set; }
 
@@ -48,6 +49,10 @@ public class AsteroidLogic : BaseMovementController, IDamageable
 
     public void Die()
     {
+        ScorePopup popup = ObjectPoolingManager.SpawnObject(_scorePopup, transform.position, Quaternion.identity, ObjectPoolingManager.PoolType.VFXs);
+
+        popup.StartCoroutine(popup.ReturnToPool(_asteroidData.ScoreValue));
+
         GameManager.Instance.UpdateScore(_asteroidData.ScoreValue);
         ReturnToPool();
     }
