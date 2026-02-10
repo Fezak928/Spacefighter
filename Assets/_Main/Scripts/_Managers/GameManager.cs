@@ -12,10 +12,12 @@ public class GameManager : MonoBehaviour
     [field: SerializeField, Range(1,5)] public int MaximumNukeAmount { get; private set; } = 5;
     public int CurrentNukeAmount { get; private set; }
 
-    [field: SerializeField] public int CurrentScore { get; private set; }
+    [SerializeField] private int _passiveTimeToGain1Score = 10;
+    public int CurrentScore { get; private set; }
     [SerializeField] TextMeshProUGUI _scoreDisplay;
 
-    public float RunPlayTime = 0f;
+    public float RunPlayTime { get; private set; } = 0f;
+    private float _passiveScoreGainTimer;
 
     [SerializeField] private GameObject _gameOverMenu;
 
@@ -67,6 +69,13 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         RunPlayTime += Time.deltaTime;
+        _passiveScoreGainTimer += Time.deltaTime;
+
+        if (_passiveScoreGainTimer >= _passiveTimeToGain1Score)
+        {
+            _passiveScoreGainTimer = 0.0f;
+            UpdateScore(1);
+        }
     }
 
     #region HUD Display

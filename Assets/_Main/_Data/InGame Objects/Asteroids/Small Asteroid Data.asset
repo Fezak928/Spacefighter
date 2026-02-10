@@ -21,6 +21,8 @@ MonoBehaviour:
   Damage: 2
   ShakeMagnitude: 0.25
   HitStopDuration: 0.25
+  Sprites:
+  - {fileID: 21300000, guid: ee732f818094fe04e843ec0ca0960b85, type: 3}
   MovementSpeedChange: 0.5
   HitPoints: 1
-  ScoreValue: 500
+  ScoreValue: 750

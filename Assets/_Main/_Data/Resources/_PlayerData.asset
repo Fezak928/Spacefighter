@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1c8a53188592f14a9b14723518f69f3, type: 3}
   m_Name: _PlayerData
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDataSO
-  MovementSpeed: 12
+  MovementSpeed: 11
   clips:
   - {fileID: 8300000, guid: 0a06cb5c45df7be409500bb3d100850d, type: 3}
   - {fileID: 8300000, guid: f95832dcf7811d2418702fb7301b7da4, type: 3}
   - {fileID: 8300000, guid: ad223ff30761f014b96f615448393d0d, type: 3}
   InputThreshold: 0.25
   HitPoints: 5
-  FireRate: 0.25
-  InvincibilityDuration: 5
+  FireRate: 0.3125
+  InvincibilityDuration: 4
   DeadSFXClips:
   - {fileID: 8300000, guid: 320c6ce86484020449957dfb7092ae21, type: 3}
   - {fileID: 8300000, guid: 628358f55f7b11343bef581f0f701be1, type: 3}

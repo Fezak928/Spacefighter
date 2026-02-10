@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 471219eb7b8333b44b7af44107e2f063, type: 3}
   m_Name: Nuke Projectile Data
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileDataSO
-  MovementSpeed: 10
+  MovementSpeed: 11
   clips:
   - {fileID: 8300000, guid: c38fc9e1c17c4e54b80eeff208eb02ec, type: 3}
   Damage: 30

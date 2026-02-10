@@ -9,19 +9,31 @@ public class AsteroidLogic : BaseMovementController, IDamageable
     public bool CanTakeDamage { get; set; }
 
     private float _movementSpeed;
+    private SpriteRenderer _spriteRenderer;
 
     private Camera _camera;
 
     private void OnEnable()
     {
         if (_camera == null)
-        {
             _camera = GameManager.Instance.PixelPerfectCamera;
-        }
 
         CurrentHitpoints = _asteroidData.HitPoints;
 
         _movementSpeed = Random.Range(_asteroidData.MovementSpeed - _asteroidData.MovementSpeedChange, _asteroidData.MovementSpeed + _asteroidData.MovementSpeedChange);
+
+        if (_spriteRenderer == null)
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if(_asteroidData.Sprites.Length > 0)
+            _spriteRenderer.sprite = PickRandomSprite();
+    }
+
+    private Sprite PickRandomSprite()
+    {
+        int spriteID = Random.Range(0, _asteroidData.Sprites.Length);
+
+        return _asteroidData.Sprites[spriteID];
     }
 
     private void FixedUpdate()

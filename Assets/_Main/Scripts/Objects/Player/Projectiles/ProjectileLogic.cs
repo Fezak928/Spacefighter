@@ -15,7 +15,7 @@ public class ProjectileLogic : BaseMovementController
             _camera = GameManager.Instance.PixelPerfectCamera;
         }
 
-        AudioManagerSO.PlaySFX(ProjectileData.clips, transform.position, 1f);
+        AudioManagerSO.PlaySFX(ProjectileData.clips, transform.position, 0.5f);
         _hasHit = false;
     }
 
