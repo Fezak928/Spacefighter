@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: _AudioManager
   m_EditorClassIdentifier: Assembly-CSharp::AudioManagerSO
   SoundObject: {fileID: 934780780287395763, guid: 99dc312ee6a5c2348a28b0322cde763a, type: 3}
+  MusicObject: {fileID: 934780780287395763, guid: fd387b8b896791d45b294217bf4fc127, type: 3}
+  SFXVolume: 0.25

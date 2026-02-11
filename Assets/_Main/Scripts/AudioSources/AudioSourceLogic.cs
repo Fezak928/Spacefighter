@@ -3,7 +3,6 @@ using System.Collections;
 
 public class AudioSourceLogic : MonoBehaviour
 {
-
     #region I don't know why this wasn't working
     //[SerializeField] private AudioSource _source;
 
@@ -19,7 +18,7 @@ public class AudioSourceLogic : MonoBehaviour
     //}
     #endregion
 
-    public IEnumerator ReturnToPoolAfterPlayingClip(float duration)
+    public virtual IEnumerator ReturnToPoolAfterPlayingClip(float duration)
     {
         yield return new WaitForSecondsRealtime(duration);
 
