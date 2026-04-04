@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "_AudioManager", menuName = "_AudioManager")]
+[CreateAssetMenu(fileName = "_AudioManager")]
 public class AudioManagerSO : ScriptableObject
 {
     public AudioSource SoundObject;
@@ -8,6 +8,7 @@ public class AudioManagerSO : ScriptableObject
     [Range(0f, 1f)] public float SFXVolume = 0.5f;
 
     private static AudioManagerSO _instance;
+
     public static AudioManagerSO Instance
     {
         get
